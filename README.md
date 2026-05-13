@@ -8,7 +8,7 @@
 </div>
 
 ## 🌐 Live Preview
-**[Click here to view the live app!]({link})**
+**[Click here to view the live app!]({YOUR_LIVE_GITHUB_PAGES_LINK_HERE})**
 
 ---
 

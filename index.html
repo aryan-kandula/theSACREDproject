@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0A1128">
+<title>the SACRED project</title>
+
+<!-- Elegant Fonts for Title -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+
+<style>
+/* ─── RESET & BASE ─────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#0A1128;color:#fff;
+  font-family:-apple-system,'SF Pro Display','SF Pro Text','Helvetica Neue',sans-serif;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+/* ─── DESIGN TOKENS ─────────────────────────────── */
+:root{
+  /* Dark Mode Colors */
+  --bg-deep:   #060B19;   /* Deep Navy Base */
+  --bg-violet: #2D1457;   /* Majestic Violet */
+  --bg-magenta:#7C2C91;   /* Light Magenta */
+  --bg-gold:   #A17726;   /* Dark Gold */
+  
+  /* Apple Liquid Glass Dark */
+  --glass-bg:      rgba(20, 25, 45, 0.15);
+  --glass-bg-hover:rgba(30, 35, 60, 0.3);
+  --glass-border:  rgba(255, 255, 255, 0.08);
+  --glass-hl1:     rgba(255, 255, 255, 0.25); /* Top inner highlight */
+  --glass-hl2:     rgba(255, 255, 255, 0.1);  /* Left inner highlight */
+  --glass-shadow:  rgba(0, 0, 0, 0.5);
+  
+  --txt:       rgba(255,255,255,0.98);
+  --txt2:      rgba(255,255,255,0.75);
+  --txt3:      rgba(255,255,255,0.45);
+  --accent:    #DDA0DD; /* Plum/Magenta accent */
+  --glow:      0 10px 40px rgba(199, 125, 255, 0.25);
+  
+  --r-pill:    999px;
+  --r-bubble:  36px;
+  --font-read: 'Georgia','Times New Roman',serif;
+}
+
+body.light-theme{
+  /* Light Mode Colors */
+  --bg-deep:   #f2e8da;   /* Cream Base */
+  --bg-violet: #dfc896;   /* Soft Gold */
+  --bg-magenta:#9acde0;   /* Sky Blue */
+  --bg-gold:   #ffffff;   /* White */
+
+  /* Apple Liquid Glass Light */
+  --glass-bg:      rgba(255, 255, 255, 0.25);
+  --glass-bg-hover:rgba(255, 255, 255, 0.5);
+  --glass-border:  rgba(255, 255, 255, 0.4);
+  --glass-hl1:     rgba(255, 255, 255, 0.8);
+  --glass-hl2:     rgba(255, 255, 255, 0.5);
+  --glass-shadow:  rgba(0, 0, 0, 0.1);
+  
+  --txt:       rgba(10, 15, 30, 0.95);
+  --txt2:      rgba(10, 15, 30, 0.7);
+  --txt3:      rgba(10, 15, 30, 0.45);
+  --accent:    #4682B4; /* Steel Blue accent */
+  --glow:      0 10px 40px rgba(135, 206, 235, 0.25);
+}
+
+/* ─── SOFT GRADIENT BACKGROUND & STARS ───────── */
+#css-bg {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden;
+  background: var(--bg-deep); transition: background 0.5s ease;
+}
+
+.blob {
+  position: absolute; filter: blur(70px); opacity: 0.7;
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  animation: morphBlob 20s infinite alternate ease-in-out;
+  will-change: transform, border-radius;
+  mix-blend-mode: color-dodge;
+}
+.b1 { width: 90vw; height: 90vw; background: var(--bg-violet); top: -20%; left: -20%; animation-delay: 0s; }
+.b2 { width: 80vw; height: 80vw; background: var(--bg-magenta); bottom: -20%; right: -20%; animation-delay: -5s; }
+.b3 { width: 100vw; height: 100vw; background: var(--bg-gold); top: 10%; left: 20%; animation-delay: -10s; mix-blend-mode: screen; }
+body.light-theme .blob { filter: blur(80px); mix-blend-mode: multiply; opacity: 0.5; }
+
+@keyframes morphBlob {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+  33% { border-radius: 70% 30% 50% 50% / 30% 60% 40% 60%; }
+  66% { border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; }
+  100% { transform: translate(10vw, 10vh) rotate(180deg) scale(1.15); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+}
+
+.star {
+  position: absolute; background: #fff; border-radius: 50%;
+  box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.4);
+  animation: pulseStar infinite ease-in-out alternate;
+}
+@keyframes pulseStar {
+  0% { transform: scale(0.5); opacity: 0.1; }
+  100% { transform: scale(1.2); opacity: 0.8; }
+}
+
+#grain-overlay{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity:0.04; mix-blend-mode:overlay;
+}
+body.light-theme #grain-overlay { opacity: 0.05; mix-blend-mode: multiply; }
+
+/* ─── APPLE LIQUID GLASS BUBBLES ─────────────────── */
+.bubble {
+  background: var(--glass-bg);
+  backdrop-filter: blur(50px) saturate(200%);
+  -webkit-backdrop-filter: blur(50px) saturate(200%);
+  border-radius: var(--r-pill);
+  box-shadow: 
+    inset 0 1px 1px var(--glass-hl1), 
+    inset 1px 0 1px var(--glass-hl2),
+    0 30px 60px var(--glass-shadow);
+  border: 1px solid var(--glass-border);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.bubble-large { border-radius: var(--r-bubble); }
+
+/* ─── LANDING PAGE ───────────────────────────────── */
+#landing{
+  position:fixed;inset:0;z-index:200;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity 0.9s ease,transform 1.1s cubic-bezier(0.4,0,0.2,1);
+  padding: 20px; text-align: center;
+}
+#landing.exit{opacity:0;transform:translateY(-50px) scale(0.95);pointer-events:none}
+
+.title-group { margin-bottom: 50px; animation: fadeUp 1s ease 0.2s both; display: flex; flex-direction: column; align-items: center; }
+.title-the { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(28px, 4vw, 36px); color: var(--txt2); margin-bottom: -15px; margin-right: 120px; }
+.title-sacred { font-family: 'Cinzel', serif; font-weight: 800; font-size: clamp(52px, 10vw, 84px); letter-spacing: 0.08em; color: var(--txt); }
+.title-project { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(28px, 4vw, 36px); color: var(--txt2); margin-top: -20px; margin-left: 140px; }
+
+.quote-box { max-width: 650px; margin-bottom: 60px; animation: fadeUp 1s ease 0.5s both; }
+.quote-text { font-family: var(--font-read); font-size: clamp(16px, 2.5vw, 20px); font-style: italic; color: var(--txt); line-height: 1.6; }
+.quote-ref { font-size: 13px; font-weight: 600; color: var(--txt3); letter-spacing: 0.1em; margin-top: 14px; text-transform: uppercase; }
+
+#open-btn {
+  padding: 16px 52px; font-size: 17px; font-weight: 600; letter-spacing: 0.08em; color: var(--txt); text-transform: uppercase;
+  cursor: pointer; user-select: none;
+  animation: fadeUp 1s ease 0.8s both, floatBtn 4s ease-in-out infinite alternate;
+}
+#open-btn:hover { background: var(--glass-bg-hover); transform: scale(1.05); box-shadow: var(--glow), inset 0 1px 1px var(--glass-hl1), inset 1px 0 1px var(--glass-hl2), 0 30px 60px var(--glass-shadow); }
+#open-btn:active { transform: scale(0.95); }
+
+@keyframes floatBtn { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+
+.credits {
+  position: absolute; bottom: 30px; font-size: 10px; font-weight: 600; letter-spacing: 0.2em; color: var(--txt3); text-transform: uppercase;
+  animation: fadeUp 1s ease 1.1s both;
+}
+
+/* ─── MAIN APP & TOP BREADCRUMBS ─────────────────── */
+#app{
+  position:fixed;inset:0;z-index:100;
+  display:flex;flex-direction:column;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.6s ease;
+}
+#app.show{opacity:1;pointer-events:all}
+
+#top-nav {
+  position: absolute; top: clamp(30px, 6vw, 50px); left: 0; right: 0;
+  display: flex; justify-content: center; gap: 12px; z-index: 150;
+  padding: 0 20px; flex-wrap: wrap;
+}
+
+.bc-bubble {
+  padding: 10px 22px; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; color: var(--txt2);
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+}
+.bc-bubble:hover { color: var(--txt); background: var(--glass-bg-hover); }
+.bc-bubble.active { color: var(--accent); background: var(--glass-bg-hover); box-shadow: var(--glow), inset 0 1px 1px var(--glass-hl1), 0 30px 60px var(--glass-shadow); }
+
+.trans-bubble { padding: 10px 18px; font-size: 12px; font-weight: 800; letter-spacing: 0.1em; color: var(--txt); margin-left: 8px; }
+
+/* ─── WHEEL SELECTOR ─────────────────────────────── */
+#wheel-wrap{
+  flex:1;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+#wheel-wrap::before,#wheel-wrap::after{
+  content:'';position:absolute;left:0;right:0;z-index:20;pointer-events:none;height:35%;
+}
+#wheel-wrap::before{top:0;background:linear-gradient(to bottom,var(--bg-deep) 0%,transparent 100%); opacity:0.8;}
+#wheel-wrap::after{bottom:0;background:linear-gradient(to top,var(--bg-deep) 0%,transparent 100%); opacity:0.8;}
+
+#wheel-track{
+  position:absolute;
+  width:clamp(300px,62vw,540px);left:50%;margin-left:calc(clamp(300px,62vw,540px) / -2);
+  will-change:transform;
+}
+
+.w-pill{
+  position:absolute;left:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;user-select:none;
+  will-change:transform,filter,opacity;
+  width:clamp(280px,80vw,800px); /* Symmetric and wider */
+  text-align: center;
+  transform:translateX(-50%);
+  height:76px;padding:0 32px;gap:12px;
+}
+.w-pill.on{
+  background: var(--glass-bg-hover);
+  box-shadow: var(--glow), inset 0 1px 1px var(--glass-hl1), inset 1px 0 1px var(--glass-hl2), 0 30px 60px var(--glass-shadow);
+  z-index: 10;
+}
+
+.p-name{font-size:clamp(17px,2.2vw,20px);font-weight:600;color:var(--txt2);letter-spacing:0.02em;transition:all 0.3s;}
+.w-pill.on .p-name { color: var(--txt); transform: scale(1.06); font-weight: 700; }
+.p-sub{font-size:12px;font-weight:600;color:var(--txt3);letter-spacing:0.1em;margin-left:14px;flex-shrink:0}
+
+/* Verse Pills */
+.w-pill.vp{
+  height:auto; min-height:130px; padding:28px 36px;
+  flex-direction:column;align-items:center;justify-content:center;gap:12px; /* Centered */
+}
+.vp-num{font-size:28px;font-weight:800;color:var(--accent);line-height:1;flex-shrink:0}
+.vp-text{
+  font-size:15px;color:var(--txt2);font-family:var(--font-read);line-height:1.6;
+  max-width:100%;overflow:hidden; text-align: center; /* Centered text */
+  display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;
+}
+.w-pill.on .vp-text { color: var(--txt); }
+.vp-row{display:flex;align-items:center;justify-content:center;gap:14px;width:100%}
+.loading-pill{justify-content:center;border-style:dashed;opacity:0.5}
+
+/* ─── READING VIEW ───────────────────────────────── */
+#reading{
+  position:fixed;inset:0;z-index:150;
+  display:flex;flex-direction:column;align-items:center;
+  padding:clamp(120px,15vw,160px) clamp(20px,6vw,48px) 140px;
+  overflow-y:auto; opacity:0;pointer-events:none;
+  transform:translateY(30px);
+  transition:opacity 0.5s ease,transform 0.6s cubic-bezier(0.34,1.56,0.64,1);
+}
+#reading.show{opacity:1;pointer-events:all;transform:translateY(0)}
+
+/* Navigation Arrows */
+.nav-arrow {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  width: 56px; height: 56px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 160; padding: 0;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.nav-arrow:hover {
+  transform: translateY(-50%) scale(1.1);
+  background: var(--glass-bg-hover);
+  box-shadow: var(--glow), inset 0 1px 1px var(--glass-hl1), 0 30px 60px var(--glass-shadow);
+}
+.nav-arrow:active { transform: translateY(-50%) scale(0.9); }
+#btn-prev { left: clamp(10px, 4vw, 50px); }
+#btn-next { right: clamp(10px, 4vw, 50px); }
+.nav-arrow svg { width: 26px; height: 26px; stroke: var(--txt); transition: stroke 0.3s; }
+.nav-arrow:hover svg { stroke: var(--accent); }
+
+@media(max-width: 800px) {
+  .nav-arrow { top: auto; bottom: clamp(100px, 15vh, 140px); transform: none; }
+  .nav-arrow:hover { transform: scale(1.1); }
+  .nav-arrow:active { transform: scale(0.9); }
+}
+
+.read-container {
+  max-width: 900px; width: 100%; padding: 40px clamp(20px, 5vw, 50px);
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.read-ref{
+  font-size:13px;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:40px;font-weight:700;
+  animation:fadeUp 0.5s ease both;
+}
+.read-verse{
+  font-family:var(--font-read); font-size:var(--read-fs,28px);
+  line-height:1.8;color:var(--txt);text-align:center;font-weight:400;
+  animation:fadeUp 0.5s ease 0.1s both;
+}
+.read-actions{ display:flex;gap:16px;margin-top:60px;flex-wrap:wrap;justify-content:center; animation:fadeUp 0.5s ease 0.2s both; }
+.read-btn{
+  padding:14px 28px;font-size:14px;font-weight:600;letter-spacing:0.05em;color:var(--txt);
+  cursor:pointer; display: flex; align-items: center; gap: 8px;
+}
+.read-btn:hover{background:var(--glass-bg-hover);box-shadow:var(--glow);transform:translateY(-2px)}
+
+.ch-list{width:100%;margin-top:20px;animation:fadeUp 0.5s ease 0.1s both;display:flex;flex-direction:column;gap:16px;}
+.ch-row{display:flex;gap:20px;padding:24px; border-bottom: 1px solid var(--glass-border); text-align: left; align-items: flex-start;}
+.ch-row:last-child { border-bottom: none; }
+.ch-v-num{font-size:16px;color:var(--accent);min-width:32px;padding-top:4px;font-weight:800;flex-shrink:0; text-align: right;}
+.ch-v-txt{font-family:var(--font-read);font-size:clamp(16px,2vw,20px);line-height:1.75;color:var(--txt)}
+
+/* ─── BOTTOM NAV (DESKTOP) ───────────────────────── */
+#bottom-nav{
+  position:fixed;bottom:clamp(20px,4vw,40px);left:50%;transform:translateX(-50%) translateY(30px);
+  z-index:300;display:flex;align-items:center;gap:6px;
+  padding:8px; opacity:0;
+  transition:opacity 0.5s ease,transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+#bottom-nav.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.nav-btn{
+  display:flex;align-items:center;height:48px;padding:0 14px;
+  border-radius:var(--r-pill);border:none;background:transparent;
+  color:var(--txt2);cursor:pointer;
+  transition:width 0.4s cubic-bezier(0.34,1.56,0.64,1), background 0.3s, color 0.3s;
+  width:48px; overflow:hidden;
+  font-family:inherit;position:relative;
+}
+.nav-btn:hover, .nav-btn.active{background:rgba(255,255,255,0.1);color:var(--txt);width:130px;}
+body.light-theme .nav-btn:hover, body.light-theme .nav-btn.active { background:rgba(0,0,0,0.05); }
+
+.nav-btn.active { color: var(--accent); }
+.nav-btn svg{flex-shrink:0;width:20px;height:20px;stroke-width:1.8}
+.nav-lbl{font-size:14px;font-weight:600;opacity:0;transition:opacity 0.2s 0.05s;letter-spacing:0.03em; margin-left: 10px; white-space: nowrap;}
+.nav-btn:hover .nav-lbl, .nav-btn.active .nav-lbl {opacity:1}
+.nav-sep{width:1px;height:24px;background:var(--glass-border);flex-shrink:0;margin:0 2px}
+
+/* ─── PANELS (SEARCH, SETTINGS, VOICE) ───────────── */
+.overlay-panel {
+  position:fixed;inset:0;z-index:250;
+  display:flex;flex-direction:column;align-items:center;
+  padding:clamp(80px,12vw,120px) clamp(20px,5vw,32px) 140px;
+  overflow-y:auto; opacity:0;pointer-events:none;
+  background: var(--glass-bg);
+  backdrop-filter:blur(60px) saturate(200%);-webkit-backdrop-filter:blur(60px) saturate(200%);
+  transition:opacity 0.4s ease;
+}
+.overlay-panel.show { opacity:1;pointer-events:all; }
+
+/* Search */
+.srch-wrap{
+  width:100%;max-width:600px; padding:0 24px; height: 64px;
+  display:flex;align-items:center;gap:14px;
+}
+.srch-wrap:focus-within{ background: var(--glass-bg-hover); box-shadow:var(--glow); }
+.srch-wrap svg{color:var(--txt3);flex-shrink:0;width:20px;height:20px}
+#search-input{
+  flex:1;background:none;border:none;outline:none;
+  font-size:18px;color:var(--txt);font-family:inherit; text-align: center;
+}
+#search-input::placeholder{color:var(--txt3)}
+#srch-clear{background:none;border:none;color:var(--txt3);cursor:pointer;display:none;padding:4px;flex-shrink:0;}
+#srch-clear:hover{color:var(--txt)}
+
+.srch-hint{margin-top:16px;font-size:13px;font-style:italic;color:var(--txt3);text-align:center;}
+.srch-results{width:100%;max-width:600px;margin-top:30px;display:flex;flex-direction:column;gap:12px; text-align: center;}
+
+.srch-item{
+  padding:24px 24px;cursor:pointer;
+  animation:fadeUp 0.4s ease both; text-align: center;
+}
+.srch-item:hover{background:var(--glass-bg-hover);transform:translateY(-2px);box-shadow:var(--glow);}
+.srch-ref{font-size:12px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.srch-txt{font-family:var(--font-read);font-size:15px;line-height:1.6;color:var(--txt)}
+
+/* Voice */
+.voice-orb{
+  width:140px;height:140px;border-radius:50%;
+  background:radial-gradient(circle,rgba(199,125,255,0.2) 0%,transparent 70%);
+  border:2px solid rgba(199,125,255,0.4);
+  display:flex;align-items:center;justify-content:center;position:relative;
+  animation:vBreathe 2s ease-in-out infinite; cursor:pointer;
+}
+body.light-theme .voice-orb {
+  background:radial-gradient(circle,rgba(135,206,235,0.3) 0%,transparent 70%);
+  border-color: rgba(135,206,235,0.6);
+}
+@keyframes vBreathe{
+  0%,100%{transform:scale(1);box-shadow:0 0 50px rgba(199,125,255,0.15)}
+  50%{transform:scale(1.1);box-shadow:0 0 90px rgba(199,125,255,0.3)}
+}
+.v-ring{position:absolute;border-radius:50%;border:1px solid rgba(199,125,255,0.2);animation:vRing 2.5s ease-out infinite;}
+.v-ring:nth-child(1){width:190px;height:190px;animation-delay:0s}
+.v-ring:nth-child(2){width:250px;height:250px;animation-delay:0.8s}
+@keyframes vRing{0%{opacity:0.6;transform:scale(0.8)}100%{opacity:0;transform:scale(1.2)}}
+
+.voice-status{margin-top:50px;font-size:18px;font-weight:600;color:var(--txt2);letter-spacing:0.05em; text-align: center;}
+.voice-tx{margin-top:16px;font-size:24px;color:var(--txt);font-style:italic;text-align:center;max-width:500px;min-height:30px; font-family: var(--font-read);}
+
+/* Settings */
+#settings-panel{
+  position:fixed;bottom:clamp(90px,16vw,120px);left:50%;
+  transform:translateX(-50%) translateY(20px) scale(0.95);
+  z-index:290; padding:32px 28px; width:clamp(300px,90vw,400px);
+  opacity:0;pointer-events:none; text-align: center;
+  transition:opacity 0.4s ease,transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+#settings-panel.show{opacity:1;pointer-events:all;transform:translateX(-50%) translateY(0) scale(1)}
+
+.s-section{margin-bottom:28px}
+.s-section:last-child{margin-bottom:0}
+.s-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--txt3);margin-bottom:14px;font-weight:700}
+.s-opts{display:flex;flex-wrap:wrap;gap:10px; justify-content: center;}
+.s-opt{
+  padding:10px 18px;font-size:14px;font-weight:600;color:var(--txt2);
+  cursor:pointer;font-family:inherit;
+}
+.s-opt:hover{color:var(--txt);background:var(--glass-bg-hover);}
+.s-opt.on{background:var(--glass-bg-hover);color:var(--accent);box-shadow:var(--glow)}
+.api-warn { font-size: 11px; color: var(--txt3); margin-top: 10px; line-height: 1.4; }
+
+/* ─── UTILS ──────────────────────────────────────── */
+.dots{display:inline-flex;gap:6px;align-items:center}
+.dots span{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:dp 1.4s ease-in-out infinite}
+.dots span:nth-child(2){animation-delay:0.2s}
+.dots span:nth-child(3){animation-delay:0.4s}
+@keyframes dp{0%,80%,100%{transform:scale(0.4);opacity:0.3}40%{transform:scale(1);opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:0}
+
+#flash{position:fixed;inset:0;z-index:400;background:var(--bg-deep);opacity:0;pointer-events:none;transition:opacity 0.3s ease}
+#flash.on{opacity:0.8}
+
+/* ─── MOBILE OPTIMIZATION ────────────────────────── */
+@media(max-width: 600px){
+  .w-pill{width:calc(100vw - 40px) !important}
+  #top-nav { padding: 0 10px; }
+  .bc-bubble { padding: 8px 12px; font-size: 11px; }
+  
+  /* Mobile Stacked Navbar (Like screenshot) */
+  #bottom-nav {
+    width: calc(100vw - 40px);
+    justify-content: space-between; padding: 12px 20px;
+  }
+  .nav-btn {
+    flex-direction: column; justify-content: center; width: auto !important; height: auto;
+    padding: 4px; background: transparent !important;
+  }
+  .nav-btn svg { margin-bottom: 6px; }
+  .nav-lbl { margin-left: 0; opacity: 1; font-size: 10px; text-align: center; }
+  .nav-sep { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- SOFT GRADIENT BACKGROUND & STARS -->
+<div id="css-bg">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="star" style="top:20%; left:15%; width:2px; height:2px; animation-duration:8s;"></div>
+  <div class="star" style="top:70%; left:80%; width:3px; height:3px; animation-duration:10s; animation-delay:1s;"></div>
+  <div class="star" style="top:40%; left:75%; width:1.5px; height:1.5px; animation-duration:6s; animation-delay:2s;"></div>
+  <div class="star" style="top:80%; left:25%; width:2px; height:2px; animation-duration:9s; animation-delay:0.5s;"></div>
+  <div class="star" style="top:10%; left:60%; width:1px; height:1px; animation-duration:7s; animation-delay:1.5s;"></div>
+</div>
+<div id="grain-overlay"></div>
+<div id="flash"></div>
+
+<!-- ══════════ LANDING ══════════ -->
+<div id="landing">
+  <div class="title-group">
+    <div class="title-the">the</div>
+    <div class="title-sacred">SACRED</div>
+    <div class="title-project">project</div>
+  </div>
+  
+  <div class="quote-box">
+    <div class="quote-text">"For the Lord gives wisdom; from his mouth come knowledge and understanding."</div>
+    <div class="quote-ref">— Proverbs 2:6</div>
+  </div>
+
+  <button id="open-btn" class="bubble" aria-label="Open Bible">Enter</button>
+  <div class="credits">Aryan Kandula</div>
+</div>
+
+<!-- ══════════ MAIN APP ══════════ -->
+<div id="app">
+  <div id="top-nav">
+    <div id="bc-container" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;"></div>
+    <div class="bubble trans-bubble" id="trans-badge">KJV</div>
+  </div>
+  
+  <div id="wheel-wrap">
+    <div id="wheel-track"></div>
+  </div>
+</div>
+
+<!-- ══════════ READING VIEW ══════════ -->
+<div id="reading">
+  <!-- Dynamic Navigation Arrows -->
+  <button id="btn-prev" class="bubble nav-arrow" style="display:none;" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button id="btn-next" class="bubble nav-arrow" style="display:none;" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+
+  <div class="bubble bubble-large read-container">
+    <div class="read-ref" id="read-ref"></div>
+    <div id="read-body"></div>
+  </div>
+</div>
+
+<!-- ══════════ SEARCH ══════════ -->
+<div id="search-panel" class="overlay-panel">
+  <div class="bubble srch-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input id="search-input" type="text" placeholder="Search verse, reference…" autocomplete="off" spellcheck="false">
+    <button id="srch-clear">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+    </button>
+  </div>
+  <div class="srch-hint">Try "John 3:16" · "for god so loved" · "psalms 23"</div>
+  <div class="srch-results" id="srch-results"></div>
+</div>
+
+<!-- ══════════ VOICE ══════════ -->
+<div id="voice-overlay" class="overlay-panel" style="justify-content:center; padding-top:0;">
+  <div class="voice-orb" onclick="startVoice()">
+    <div class="v-ring"></div><div class="v-ring"></div>
+    <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="var(--txt)" stroke-width="1.8" stroke-linecap="round">
+      <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/>
+      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+      <line x1="12" y1="19" x2="12" y2="22"/>
+    </svg>
+  </div>
+  <div class="voice-status" id="v-status">Listening…</div>
+  <div class="voice-tx" id="v-tx"></div>
+  <button class="bubble read-btn" style="margin-top:40px;" onclick="stopVoice()">Close Voice Mode</button>
+</div>
+
+<!-- ══════════ SETTINGS ══════════ -->
+<div id="settings-panel" class="bubble bubble-large">
+  <div class="s-section">
+    <div class="s-label">Translation</div>
+    <div class="s-opts" id="trans-opts">
+      <button class="bubble s-opt on" data-tr="kjv">KJV</button>
+      <button class="bubble s-opt" data-tr="web">WEB</button>
+      <button class="bubble s-opt" data-tr="bbe">BBE</button>
+      <button class="bubble s-opt" data-tr="niv">NIV</button>
+      <button class="bubble s-opt" data-tr="esv">ESV</button>
+      <button class="bubble s-opt" data-tr="nkjv">NKJV</button>
+    </div>
+    <div class="api-warn">Note: NIV, ESV, and NKJV will attempt proxy fetching. If blocked, it falls back to WEB.</div>
+  </div>
+  <div class="s-section">
+    <div class="s-label">Text Size</div>
+    <div class="s-opts" id="fs-opts">
+      <button class="bubble s-opt" data-fs="20px">S</button>
+      <button class="bubble s-opt on" data-fs="28px">M</button>
+      <button class="bubble s-opt" data-fs="36px">L</button>
+    </div>
+  </div>
+  <div class="s-section">
+    <div class="s-label">Theme</div>
+    <div class="s-opts" id="theme-opts">
+      <button class="bubble s-opt on" data-theme="dark">Dark</button>
+      <button class="bubble s-opt" data-theme="light">Light</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ BOTTOM NAV ══════════ -->
+<div id="bottom-nav" class="bubble">
+  <button class="nav-btn" id="nb-back" onclick="navBack()" aria-label="Home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg>
+    <span class="nav-lbl">Home</span>
+  </button>
+  <div class="nav-sep"></div>
+  <button class="nav-btn" id="nb-search" onclick="toggleSearch()" aria-label="Search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <span class="nav-lbl">Search</span>
+  </button>
+  <button class="nav-btn" id="nb-mic" onclick="toggleVoice()" aria-label="Voice">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+      <path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/>
+      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/>
+    </svg>
+    <span class="nav-lbl">Voice</span>
+  </button>
+  <div class="nav-sep"></div>
+  <button class="nav-btn" id="nb-settings" onclick="toggleSettings()" aria-label="Settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </svg>
+    <span class="nav-lbl">Settings</span>
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  JAVASCRIPT
+══════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ─── BIBLE DATA ─── */
+const BOOKS = [
+  {n:'Genesis',a:'gen',c:50,t:'OT'},{n:'Exodus',a:'exod',c:40,t:'OT'},{n:'Leviticus',a:'lev',c:27,t:'OT'},{n:'Numbers',a:'num',c:36,t:'OT'},
+  {n:'Deuteronomy',a:'deut',c:34,t:'OT'},{n:'Joshua',a:'josh',c:24,t:'OT'},{n:'Judges',a:'judg',c:21,t:'OT'},{n:'Ruth',a:'ruth',c:4,t:'OT'},
+  {n:'1 Samuel',a:'1sam',c:31,t:'OT'},{n:'2 Samuel',a:'2sam',c:24,t:'OT'},{n:'1 Kings',a:'1kgs',c:22,t:'OT'},{n:'2 Kings',a:'2kgs',c:25,t:'OT'},
+  {n:'1 Chronicles',a:'1chr',c:29,t:'OT'},{n:'2 Chronicles',a:'2chr',c:36,t:'OT'},{n:'Ezra',a:'ezra',c:10,t:'OT'},{n:'Nehemiah',a:'neh',c:13,t:'OT'},
+  {n:'Esther',a:'esth',c:10,t:'OT'},{n:'Job',a:'job',c:42,t:'OT'},{n:'Psalms',a:'ps',c:150,t:'OT'},{n:'Proverbs',a:'prov',c:31,t:'OT'},
+  {n:'Ecclesiastes',a:'eccl',c:12,t:'OT'},{n:'Song of Solomon',a:'song',c:8,t:'OT'},{n:'Isaiah',a:'isa',c:66,t:'OT'},{n:'Jeremiah',a:'jer',c:52,t:'OT'},
+  {n:'Lamentations',a:'lam',c:5,t:'OT'},{n:'Ezekiel',a:'ezek',c:48,t:'OT'},{n:'Daniel',a:'dan',c:12,t:'OT'},{n:'Hosea',a:'hos',c:14,t:'OT'},
+  {n:'Joel',a:'joel',c:3,t:'OT'},{n:'Amos',a:'amos',c:9,t:'OT'},{n:'Obadiah',a:'obad',c:1,t:'OT'},{n:'Jonah',a:'jonah',c:4,t:'OT'},
+  {n:'Micah',a:'mic',c:7,t:'OT'},{n:'Nahum',a:'nah',c:3,t:'OT'},{n:'Habakkuk',a:'hab',c:3,t:'OT'},{n:'Zephaniah',a:'zeph',c:3,t:'OT'},
+  {n:'Haggai',a:'hag',c:2,t:'OT'},{n:'Zechariah',a:'zech',c:14,t:'OT'},{n:'Malachi',a:'mal',c:4,t:'OT'},
+  {n:'Matthew',a:'matt',c:28,t:'NT'},{n:'Mark',a:'mark',c:16,t:'NT'},{n:'Luke',a:'luke',c:24,t:'NT'},{n:'John',a:'john',c:21,t:'NT'},
+  {n:'Acts',a:'acts',c:28,t:'NT'},{n:'Romans',a:'rom',c:16,t:'NT'},{n:'1 Corinthians',a:'1cor',c:16,t:'NT'},{n:'2 Corinthians',a:'2cor',c:13,t:'NT'},
+  {n:'Galatians',a:'gal',c:6,t:'NT'},{n:'Ephesians',a:'eph',c:6,t:'NT'},{n:'Philippians',a:'phil',c:4,t:'NT'},{n:'Colossians',a:'col',c:4,t:'NT'},
+  {n:'1 Thessalonians',a:'1thess',c:5,t:'NT'},{n:'2 Thessalonians',a:'2thess',c:3,t:'NT'},{n:'1 Timothy',a:'1tim',c:6,t:'NT'},{n:'2 Timothy',a:'2tim',c:4,t:'NT'},
+  {n:'Titus',a:'titus',c:3,t:'NT'},{n:'Philemon',a:'phlm',c:1,t:'NT'},{n:'Hebrews',a:'heb',c:13,t:'NT'},{n:'James',a:'jas',c:5,t:'NT'},
+  {n:'1 Peter',a:'1pet',c:5,t:'NT'},{n:'2 Peter',a:'2pet',c:3,t:'NT'},{n:'1 John',a:'1john',c:5,t:'NT'},{n:'2 John',a:'2john',c:1,t:'NT'},
+  {n:'3 John',a:'3john',c:1,t:'NT'},{n:'Jude',a:'jude',c:1,t:'NT'},{n:'Revelation',a:'rev',c:22,t:'NT'},
+];
+
+const BOOK_MAP = {};
+BOOKS.forEach((b, i) => { BOOK_MAP[b.a] = i; BOOK_MAP[b.n.toLowerCase()] = i; });
+['gen','ex','lev','num','deut','josh','judg','ruth','1sam','2sam','1kgs','2kgs','1chr','2chr','ezra','neh','esth','job','ps','prov','eccl','song','isa','jer','lam','ezek','dan','hos','joel','amos','obad','jonah','mic','nah','hab','zeph','hag','zech','mal','matt','mark','luke','john','acts','rom','1cor','2cor','gal','eph','phil','col','1thess','2thess','1tim','2tim','titus','phlm','heb','jas','1pet','2pet','1john','2john','3john','jude','rev'].forEach((a,i) => BOOK_MAP[a]=i);
+
+const POP = [
+  {r:'John 3:16',b:'john',c:3,v:16,x:'For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.'},
+  {r:'Psalm 23:1',b:'ps',c:23,v:1,x:'The LORD is my shepherd; I shall not want.'},
+  {r:'Genesis 1:1',b:'gen',c:1,v:1,x:'In the beginning God created the heaven and the earth.'},
+  {r:'Proverbs 3:5',b:'prov',c:3,v:5,x:'Trust in the LORD with all thine heart; and lean not unto thine own understanding.'},
+  {r:'Philippians 4:13',b:'phil',c:4,v:13,x:'I can do all things through Christ which strengtheneth me.'}
+];
+
+const S = {
+  screen: 'books', book: null, chapter: null,
+  chapterData: null, /* Cache current chapter verses for navigation */
+  translation: 'kjv', fontSize: '28px',
+  searchOpen: false, settingsOpen: false
+};
+
+/* ─── WHEEL ─── */
+class Wheel {
+  constructor() {
+    this.track = document.getElementById('wheel-track');
+    this.wrap  = document.getElementById('wheel-wrap');
+    this.items = []; this.els = [];
+    this.offset = 0; this.velocity = 0; this.dragging = false;
+    this.startY = 0; this.prevY = 0; this.prevTime = 0;
+    this.snapTo = null; this.selIdx = 0;
+    this.ih = 90; this.friction = 0.88; this.snap = 0.15;
+    this._bindEvents(); this._loop();
+  }
+
+  load(items, onSelect, startIdx = 0) {
+    this.items = items; this.onSelect = onSelect;
+    this.selIdx = startIdx;
+    this.ih = items[0]?.type === 'verse' ? 160 : 95;
+    this.offset = startIdx * this.ih;
+    this.velocity = 0; this.snapTo = null;
+    this._render(); this._frame(true);
+  }
+
+  goTo(idx, animate = true) {
+    idx = Math.max(0, Math.min(this.items.length - 1, idx));
+    this.selIdx = idx;
+    if (animate) { this.snapTo = idx * this.ih; this.velocity = 0; }
+    else { this.offset = idx * this.ih; }
+  }
+
+  _render() {
+    this.track.innerHTML = ''; this.els = [];
+    this.items.forEach((item, i) => {
+      const el = document.createElement('div');
+      el.className = 'w-pill bubble' + (item.type === 'verse' ? ' vp bubble-large' : '') + (item.loading ? ' loading-pill' : '');
+      el.style.cssText = 'position:absolute;left:50%';
+
+      if (item.loading) {
+        el.innerHTML = '<div class="dots"><span></span><span></span><span></span></div>';
+      } else if (item.type === 'verse') {
+        el.innerHTML = `<div class="vp-row"><div class="vp-num">${item.vn}</div></div><div class="vp-text">${item.preview}</div>`;
+      } else {
+        el.innerHTML = `<span class="p-name">${escHtml(item.label)}</span><span class="p-sub">${item.sub||''}</span>`;
+      }
+
+      el.addEventListener('pointerdown', (e) => {
+        if (Math.abs(i - this.selIdx) <= 0.5) { e.stopPropagation(); this.onSelect && this.onSelect(item, i); }
+      });
+      this.track.appendChild(el); this.els.push(el);
+    });
+  }
+
+  _frame() {
+    const ih = this.ih;
+    this.els.forEach((el, i) => {
+      const dy = (i * ih) - this.offset;
+      const nd = dy / ih;
+      const ad = Math.abs(nd);
+
+      if (ad > 5.5) { el.style.opacity = '0'; return; }
+
+      const scale = Math.max(0.65, 1 - ad * 0.08);
+      const blur = ad * 1.5;
+      const opacity = Math.max(0.08, 1 - ad * 0.25);
+      const rotX = nd * -12;
+      const tz = -ad * 40;
+
+      el.style.transform = `translateX(-50%) translateY(${dy}px) perspective(900px) rotateX(${rotX}deg) translateZ(${tz}px) scale(${scale})`;
+      el.style.filter = blur > 0.4 ? `blur(${blur.toFixed(1)}px)` : 'none';
+      el.style.opacity = opacity.toFixed(3);
+      el.style.pointerEvents = ad < 1.8 ? 'auto' : 'none';
+      el.classList.toggle('on', ad < 0.35);
+    });
+    this.selIdx = Math.max(0, Math.min(this.items.length - 1, Math.round(this.offset / ih)));
+  }
+
+  _loop() {
+    if (!this.dragging) {
+      const ih = this.ih, max = (this.items.length - 1) * ih;
+      if (this.snapTo !== null) {
+        const diff = this.snapTo - this.offset;
+        this.offset += diff * this.snap;
+        if (Math.abs(diff) < 0.5) { this.offset = this.snapTo; this.snapTo = null; }
+      } else {
+        this.offset += this.velocity; this.velocity *= this.friction;
+        if (this.offset < 0) this.offset += (-this.offset) * 0.2;
+        if (this.offset > max) this.offset -= (this.offset - max) * 0.2;
+        if (Math.abs(this.velocity) < 0.8) {
+          const snap = Math.round(this.offset / ih) * ih;
+          this.offset += (snap - this.offset) * this.snap;
+        }
+      }
+    }
+    this._frame();
+    requestAnimationFrame(() => this._loop());
+  }
+
+  _bindEvents() {
+    const w = this.wrap;
+    w.addEventListener('pointerdown', e => {
+      this.dragging = true; this.startY = e.clientY; this.prevY = e.clientY;
+      this.prevTime = Date.now(); this.velocity = 0; this.snapTo = null;
+      w.setPointerCapture(e.pointerId);
+    });
+    w.addEventListener('pointermove', e => {
+      if (!this.dragging) return;
+      const dy = this.prevY - e.clientY, dt = Math.max(1, Date.now() - this.prevTime);
+      this.velocity = dy / dt * 18; this.offset += dy;
+      this.prevY = e.clientY; this.prevTime = Date.now();
+    });
+    const up = () => { this.dragging = false; };
+    w.addEventListener('pointerup', up); w.addEventListener('pointercancel', up);
+    w.addEventListener('wheel', e => { e.preventDefault(); this.velocity += e.deltaY * 0.3; this.snapTo = null; }, { passive: false });
+  }
+}
+
+/* ─── API LOGIC ─── */
+async function fetchChapterData(book, chNum) {
+  const isCopyrighted = ['niv','nkjv','esv','nlt'].includes(S.translation);
+  
+  if (isCopyrighted) {
+    try {
+      const bollsId = book.idx + 1;
+      const res = await fetch(`https://bolls.life/get-text/${S.translation.toUpperCase()}/${bollsId}/${chNum}/`);
+      if (!res.ok) throw new Error('Bolls API failed');
+      const data = await res.json();
+      if (!data || !data.length) throw new Error('Empty');
+      return { source: 'bolls', verses: data.map(v => ({ verse: v.verse, text: v.text })) };
+    } catch(e) {
+      console.warn('Fallback to WEB due to API limits', e);
+      return fetchBibleApi(book, chNum, 'web', true);
+    }
+  } else {
+    return fetchBibleApi(book, chNum, S.translation, false);
+  }
+}
+
+async function fetchBibleApi(book, chNum, trans, isFallback) {
+  const res = await fetch(`https://bible-api.com/${encodeURIComponent(book.a)}+${chNum}?translation=${trans}`);
+  const data = await res.json();
+  return { source: isFallback ? 'fallback' : 'api', verses: data.verses || [] };
+}
+
+/* ─── APP FLOW ─── */
+let wheel;
+function initApp() { wheel = new Wheel(); goBooks(); }
+
+function goBooks(startIdx = 0) {
+  S.screen = 'books'; S.book = null; S.chapter = null; S.chapterData = null;
+  wheel.load(BOOKS.map((b, i) => ({ label: b.n, sub: `${b.c} ch`, book: b, idx: i })), (item) => {
+    if (wheel.selIdx !== item.idx) { wheel.goTo(item.idx); return; }
+    pickBook(item.book);
+  }, startIdx);
+  renderBC();
+}
+
+function pickBook(book) { S.book = book; flash(() => goChapters()); }
+
+function goChapters(startIdx = 0) {
+  S.screen = 'chapters'; S.chapter = null; S.chapterData = null;
+  wheel.load(Array.from({length: S.book.c}, (_, i) => ({ label: `Chapter ${i + 1}`, sub: S.book.n, chNum: i + 1 })), (item) => {
+    if (wheel.selIdx !== item.chNum - 1) { wheel.goTo(item.chNum - 1); return; }
+    pickChapter(item.chNum);
+  }, startIdx);
+  renderBC();
+}
+
+function pickChapter(ch) { S.chapter = ch; flash(() => goVerses()); }
+
+async function goVerses(startIdx = 0) {
+  S.screen = 'verses'; renderBC();
+  wheel.load([{loading: true}], () => {});
+
+  try {
+    const data = await fetchChapterData(S.book, S.chapter);
+    if (!data.verses.length) throw new Error('empty');
+    
+    // Cache chapter verses for navigation arrows
+    S.chapterData = { ch: S.chapter, verses: data.verses };
+    
+    if (data.source === 'fallback') {
+      const w = document.getElementById('trans-badge');
+      w.innerHTML = `WEB (Fallback)`;
+      w.style.color = '#ffaa00';
+    }
+
+    wheel.load(data.verses.map(v => ({
+      type: 'verse', vn: v.verse,
+      preview: escHtml(v.text).substring(0, 140) + '…',
+      full: escHtml(v.text), ch: S.chapter, bName: S.book.n,
+    })), (item) => {
+      if (wheel.selIdx !== item.vn - 1) { wheel.goTo(item.vn - 1); return; }
+      openVerse(item);
+    }, startIdx);
+  } catch {
+    wheel.load(Array.from({length:20}, (_,i) => ({
+      type:'verse', vn:i+1, preview:'Network error. Please try again.', full:'', ch:S.chapter, bName:S.book.n
+    })), () => {}, startIdx);
+  }
+}
+
+function setupArrows(onPrev, onNext) {
+  const pBtn = document.getElementById('btn-prev');
+  const nBtn = document.getElementById('btn-next');
+  if(onPrev) { pBtn.style.display = 'flex'; pBtn.onclick = onPrev; } else { pBtn.style.display = 'none'; }
+  if(onNext) { nBtn.style.display = 'flex'; nBtn.onclick = onNext; } else { nBtn.style.display = 'none'; }
+}
+
+function openVerse(item) {
+  S.screen = 'reading';
+  document.getElementById('app').style.opacity = '0';
+  document.getElementById('app').style.pointerEvents = 'none';
+  const readV = document.getElementById('reading');
+  readV.classList.add('show');
+  readV.style.setProperty('--read-fs', S.fontSize);
+  
+  // Logic for Verse Navigation Arrows
+  if (S.chapterData && S.chapterData.ch === S.chapter) {
+    const idx = S.chapterData.verses.findIndex(v => v.verse == item.vn);
+    if (idx !== -1) {
+      setupArrows(
+        idx > 0 ? () => openVerse({full: escHtml(S.chapterData.verses[idx-1].text), ch: S.chapter, vn: S.chapterData.verses[idx-1].verse, bName: S.book.n}) : null,
+        idx < S.chapterData.verses.length - 1 ? () => openVerse({full: escHtml(S.chapterData.verses[idx+1].text), ch: S.chapter, vn: S.chapterData.verses[idx+1].verse, bName: S.book.n}) : null
+      );
+    } else setupArrows(null, null);
+  } else {
+    // If entered via Search/Voice and missing cache, fetch it silently so arrows appear
+    setupArrows(null, null);
+    fetchChapterData(S.book, S.chapter).then(data => {
+      if(data && data.verses) {
+        S.chapterData = { ch: S.chapter, verses: data.verses };
+        // If still viewing the same verse, trigger it again to bind arrows
+        if (S.screen === 'reading' && document.getElementById('read-ref').textContent === `${item.bName} ${item.ch}:${item.vn}`) {
+          openVerse(item);
+        }
+      }
+    }).catch(()=>{});
+  }
+  
+  document.getElementById('read-ref').textContent = `${item.bName} ${item.ch}:${item.vn}`;
+  document.getElementById('read-body').innerHTML = `
+    <div class="read-verse">${item.full}</div>
+    <div class="read-actions">
+      <button class="bubble read-btn" onclick="viewFullChapter()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        View Full Chapter
+      </button>
+      <button class="bubble read-btn" onclick="closeReading()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back to Verses
+      </button>
+    </div>
+  `;
+}
+
+async function viewFullChapter() {
+  const readRef = document.getElementById('read-ref');
+  const readBody = document.getElementById('read-body');
+  readRef.textContent = `${S.book.n} ${S.chapter}`;
+  readBody.innerHTML = '<div style="display:flex;justify-content:center;padding:40px"><div class="dots"><span></span><span></span><span></span></div></div>';
+
+  // Setup Chapter Navigation Arrows
+  setupArrows(
+    S.chapter > 1 ? () => { S.chapter--; viewFullChapter(); renderBC(); } : null,
+    S.chapter < S.book.c ? () => { S.chapter++; viewFullChapter(); renderBC(); } : null
+  );
+
+  try {
+    let data;
+    if (S.chapterData && S.chapterData.ch === S.chapter) {
+      data = { verses: S.chapterData.verses };
+    } else {
+      data = await fetchChapterData(S.book, S.chapter);
+      if (data.verses) S.chapterData = { ch: S.chapter, verses: data.verses };
+    }
+
+    if (data.verses) {
+      readBody.innerHTML = '<div class="ch-list">' +
+        data.verses.map(v => `
+          <div class="ch-row">
+            <div class="ch-v-num">${v.verse}</div>
+            <div class="ch-v-txt">${escHtml(v.text)}</div>
+          </div>
+        `).join('') + '</div>' + 
+        `<div class="read-actions"><button class="bubble read-btn" onclick="closeReading()">← Back to Verses</button></div>`;
+      
+      // Auto-scroll to top smoothly
+      document.getElementById('reading').scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  } catch {
+    readBody.innerHTML = '<div style="text-align:center;color:var(--txt2);padding:40px">Could not load chapter.</div>';
+  }
+}
+
+function closeReading() {
+  setupArrows(null, null); // Hide arrows
+  document.getElementById('reading').classList.remove('show');
+  setTimeout(() => {
+    S.screen = 'verses';
+    document.getElementById('app').style.opacity = '1';
+    document.getElementById('app').style.pointerEvents = 'all';
+    renderBC();
+  }, 400);
+}
+
+function navBack() {
+  closeAllPanels();
+  if (S.screen === 'reading') { closeReading(); return; }
+  if (S.screen === 'verses')  { flash(() => goChapters()); return; }
+  if (S.screen === 'chapters'){ flash(() => goBooks()); return; }
+}
+
+function flash(cb) {
+  const f = document.getElementById('flash'); f.classList.add('on');
+  setTimeout(() => { cb(); setTimeout(() => f.classList.remove('on'), 220); }, 160);
+}
+
+function renderBC() {
+  const bc = document.getElementById('bc-container');
+  const badge = document.getElementById('trans-badge');
+  badge.textContent = S.translation.toUpperCase();
+  badge.style.color = 'var(--txt)';
+
+  let html = `<div class="bubble bc-bubble ${S.screen==='books'?'active':''}" onclick="if(S.screen!=='books')flash(()=>goBooks())">Bible</div>`;
+  if (S.book) html += `<div class="bubble bc-bubble ${S.screen==='chapters'?'active':''}" onclick="if(S.screen!=='chapters')flash(()=>goChapters())">${S.book.n}</div>`;
+  if (S.chapter) html += `<div class="bubble bc-bubble ${S.screen==='verses'||S.screen==='reading'?'active':''}" onclick="if(S.screen==='reading')closeReading()">Ch ${S.chapter}</div>`;
+  bc.innerHTML = html;
+}
+
+// Fixed HTML escaping to completely remove <br/> and \n
+function escHtml(s) { 
+  if(!s) return '';
+  return String(s)
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/\n/g, ' ')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\s{2,}/g, ' ')
+    .trim(); 
+}
+
+/* ─── UI CONTROLS ─── */
+function toggleSearch() { togglePanel('search-panel', 'nb-search'); setTimeout(()=>document.getElementById('search-input').focus(), 200); }
+function toggleSettings() { togglePanel('settings-panel', 'nb-settings'); }
+
+function togglePanel(pid, bid) {
+  const p = document.getElementById(pid), b = document.getElementById(bid);
+  if (p.classList.contains('show')) { closeAllPanels(); }
+  else { closeAllPanels(); p.classList.add('show'); b.classList.add('active'); }
+}
+
+function closeAllPanels() {
+  document.querySelectorAll('.overlay-panel, #settings-panel').forEach(p => p.classList.remove('show'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+}
+
+document.querySelectorAll('[data-tr]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    S.translation = btn.dataset.tr;
+    document.querySelectorAll('[data-tr]').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on'); renderBC();
+    if(S.screen === 'verses') flash(() => goVerses());
+  });
+});
+document.querySelectorAll('[data-fs]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    S.fontSize = btn.dataset.fs;
+    document.querySelectorAll('[data-fs]').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById('reading').style.setProperty('--read-fs', S.fontSize);
+  });
+});
+document.querySelectorAll('[data-theme]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.body.classList.toggle('light-theme', btn.dataset.theme === 'light');
+    document.querySelectorAll('[data-theme]').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+  });
+});
+
+document.getElementById('open-btn').addEventListener('click', () => {
+  document.getElementById('landing').classList.add('exit');
+  setTimeout(() => {
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('app').classList.add('show');
+    setTimeout(() => document.getElementById('bottom-nav').classList.add('show'), 300);
+  }, 700);
+});
+
+/* Simple Search & Full Text Search implementation */
+let _sd = null;
+document.getElementById('search-input').addEventListener('input', e => {
+  const v = e.target.value;
+  document.getElementById('srch-clear').style.display = v ? 'block' : 'none';
+  clearTimeout(_sd);
+  _sd = setTimeout(() => doSearch(v), 500);
+});
+
+function renderSearchResults(hits) {
+  const results = document.getElementById('srch-results');
+  if (hits.length) {
+    results.innerHTML = hits.map((it, i) => `
+      <div class="bubble srch-item" style="animation-delay:${i*40}ms" onclick="navPop(${i})">
+        <div class="srch-ref">${escHtml(it.r)}</div>
+        <div class="srch-txt">${escHtml(it.x)}</div>
+      </div>
+    `).join('');
+    window._SA = hits;
+  } else {
+    results.innerHTML = '<div style="text-align:center;color:var(--txt3);padding:24px">No results found.</div>';
+  }
+}
+
+function cleanBollsText(html) {
+  return html.replace(/<S>.*?<\/S>/gi, '').replace(/<sup.*?>.*?<\/sup>/gi, '').replace(/<.*?>/g, '').replace(/\s{2,}/g, ' ').trim();
+}
+
+async function doSearch(q) {
+  const results = document.getElementById('srch-results');
+  if (!q.trim()) { results.innerHTML = ''; return; }
+  results.innerHTML = '<div style="text-align:center;color:var(--txt3);padding:24px">Searching...</div>';
+  
+  const ql = q.toLowerCase();
+  let hits = POP.filter(p => p.x.toLowerCase().includes(ql) || p.r.toLowerCase().includes(ql));
+  
+  try {
+    const tr = S.translation === 'nkjv' || S.translation === 'niv' || S.translation === 'esv' ? 'WEB' : S.translation.toUpperCase();
+    const res = await fetch(`https://bolls.life/search/${tr}/?search=${encodeURIComponent(q)}&match_case=false&match_whole=false`);
+    if(res.ok) {
+      const data = await res.json();
+      if(data && data.length) {
+        const apiHits = data.slice(0, 15).map(v => {
+          const b = BOOKS[v.book - 1];
+          if (!b) return null; // Ignore apocrypha
+          return {
+             r: `${b.n} ${v.chapter}:${v.verse}`,
+             b: b.a, c: v.chapter, v: v.verse, x: cleanBollsText(v.text)
+          };
+        }).filter(Boolean);
+        
+        // Merge and unique
+        const seen = new Set(hits.map(h => h.r));
+        for(let a of apiHits) {
+          if(!seen.has(a.r)) { hits.push(a); seen.add(a.r); }
+        }
+      }
+    }
+  } catch(e) { console.warn('API Search failed:', e); }
+
+  renderSearchResults(hits);
+}
+window.navPop = function(idx) {
+  const p = window._SA[idx];
+  S.book = BOOKS[BOOK_MAP[p.b]]; S.chapter = p.c;
+  closeAllPanels();
+  document.getElementById('app').style.opacity = '1';
+  document.getElementById('app').style.pointerEvents = 'all';
+  openVerse({full: p.x, ch: p.c, vn: p.v, bName: S.book.n});
+  renderBC();
+};
+document.getElementById('srch-clear').addEventListener('click', () => {
+  document.getElementById('search-input').value = '';
+  document.getElementById('srch-results').innerHTML = '';
+  document.getElementById('srch-clear').style.display = 'none';
+});
+
+/* ─── VOICE SEARCH API ─── */
+let recognition;
+let isListening = false;
+
+function toggleVoice() {
+  const p = document.getElementById('voice-overlay'), b = document.getElementById('nb-mic');
+  if (p.classList.contains('show')) {
+    stopVoice();
+  } else {
+    closeAllPanels(); p.classList.add('show'); b.classList.add('active');
+  }
+}
+
+function startVoice() {
+  const vTx = document.getElementById('v-tx');
+  const vStatus = document.getElementById('v-status');
+  vTx.textContent = '';
+  vStatus.textContent = 'Listening…';
+
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  
+  if (!SpeechRec) {
+    vStatus.textContent = 'Voice search not supported. Try using Google Chrome.';
+    return;
+  }
+  if (isListening) return;
+
+  if (!recognition) {
+    recognition = new SpeechRec();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => { isListening = true; };
+    
+    recognition.onresult = (e) => {
+      let interim = '', final = '';
+      for (let i = e.resultIndex; i < e.results.length; ++i) {
+        if (e.results[i].isFinal) final += e.results[i][0].transcript;
+        else interim += e.results[i][0].transcript;
+      }
+      vTx.textContent = final || interim;
+      if (final) processVoiceCommand(final.toLowerCase().trim());
+    };
+    
+    recognition.onerror = (e) => {
+      if(e.error === 'not-allowed') {
+        vStatus.textContent = 'Mic access denied. (Note: Run on HTTPS/GitHub Pages to save permission)';
+      } else {
+        vStatus.textContent = 'Error: ' + e.error;
+      }
+      isListening = false;
+    };
+    
+    recognition.onend = () => {
+      isListening = false;
+      if (vStatus.textContent === 'Listening…') vStatus.textContent = 'Tap orb to retry';
+    };
+  }
+  
+  try { recognition.start(); } catch(e) {}
+}
+
+function stopVoice() {
+  if (recognition && isListening) { recognition.stop(); isListening = false; }
+  closeAllPanels();
+}
+
+// Converts written numbers to digits so the API can understand them
+function parseVoiceRef(cmd) {
+  const map = {
+    'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10,
+    'eleven':11,'twelve':12,'thirteen':13,'fourteen':14,'fifteen':15,'sixteen':16,'seventeen':17,'eighteen':18,'nineteen':19,'twenty':20,
+    'thirty':30,'forty':40,'fifty':50,'sixty':60,'seventy':70,'eighty':80,'ninety':90,'hundred':100,
+    'first':'1','second':'2','third':'3'
+  };
+  
+  let s = cmd.toLowerCase().split(' ').map(w => map[w] !== undefined ? map[w] : w).join(' ');
+  s = s.replace(/(chapter|verse|book of)/g, '').replace(/(:|;|'|,|\.)/g, '').replace(/\s+/g, ' ').trim();
+  s = s.replace(/^first /g, '1 ').replace(/^second /g, '2 ').replace(/^third /g, '3 ');
+
+  let matchedBook = null;
+  let remaining = s;
+  for (let b of BOOKS) {
+    if (s.startsWith(b.n.toLowerCase())) {
+      matchedBook = b.n;
+      remaining = s.substring(b.n.length).trim();
+      break;
+    }
+  }
+  
+  if (matchedBook) {
+    let parts = remaining.split(' ').filter(Boolean);
+    let ch = parseInt(parts[0]);
+    let v = parseInt(parts[1]);
+    if (!isNaN(ch)) {
+      if (!isNaN(v)) return `${matchedBook} ${ch}:${v}`;
+      return `${matchedBook} ${ch}`;
+    }
+    return matchedBook;
+  }
+  return cmd; 
+}
+
+async function processVoiceCommand(cmd) {
+  const vStatus = document.getElementById('v-status');
+  vStatus.textContent = 'Analyzing…';
+  
+  let query = parseVoiceRef(cmd);
+  
+  try {
+    // 1. Try parsing as a verse reference (e.g. "John 3:16")
+    const res = await fetch(`https://bible-api.com/${encodeURIComponent(query)}?translation=${S.translation === 'nkjv' || S.translation === 'niv' || S.translation === 'esv' ? 'web' : S.translation}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.verses && data.verses.length > 0) {
+        const v = data.verses[0];
+        const bKey = v.book_id ? v.book_id.toLowerCase() : v.book_name.toLowerCase();
+        openFromVoice(BOOKS[BOOK_MAP[bKey]] || BOOKS[0], v.chapter, v.verse, data.text);
+        return;
+      }
+    }
+  } catch (e) {
+    // silently fail and proceed
+  }
+
+  // 2. Check Local Popular Verses First (INSTANT)
+  const hits = POP.filter(p => p.x.toLowerCase().includes(cmd.toLowerCase()) || p.r.toLowerCase().includes(cmd.toLowerCase()));
+  if(hits.length) {
+    const p = hits[0];
+    openFromVoice(BOOKS[BOOK_MAP[p.b]], p.c, p.v, p.x);
+    return;
+  }
+
+  // 3. Full-text search fallback
+  vStatus.textContent = 'Searching full text…';
+  try {
+    const tr = S.translation === 'nkjv' || S.translation === 'niv' || S.translation === 'esv' ? 'WEB' : S.translation.toUpperCase();
+    const sRes = await fetch(`https://bolls.life/search/${tr}/?search=${encodeURIComponent(cmd)}&match_case=false&match_whole=false`);
+    if (sRes.ok) {
+      const sData = await sRes.json();
+      if (sData && sData.length > 0) {
+        // Find the first valid book (1-66) to skip apocrypha
+        const v = sData.find(item => BOOKS[item.book - 1]);
+        if (v) {
+          const b = BOOKS[v.book - 1];
+          openFromVoice(b, v.chapter, v.verse, cleanBollsText(v.text));
+          return;
+        }
+      }
+    }
+  } catch(err) { console.warn('Bolls search failed', err); }
+
+  vStatus.textContent = `Couldn't find "${query}".`;
+  setTimeout(() => { if(!isListening) vStatus.textContent = 'Tap orb to retry'; }, 3500);
+}
+
+function openFromVoice(book, ch, vn, text) {
+  stopVoice();
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('app').classList.add('show');
+  S.book = book; S.chapter = ch;
+  openVerse({ full: escHtml(text), ch: ch, vn: vn, bName: book.n });
+  renderBC();
+}
+
+initApp();
+</script>
+</body>
+</html>
