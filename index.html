@@ -80,9 +80,9 @@ body.light-theme{
   animation: morphBlob 20s infinite alternate ease-in-out;
   will-change: transform;
 }
-.b1 { width: 50vw; height: 50vw; background: var(--bg-violet); top: -10%; left: -10%; animation-delay: 0s; }
-.b2 { width: 30vw; height: 30vw; background: var(--bg-magenta); bottom: 10%; right: 10%; animation-delay: -5s; }
-.b3 { width: 80vw; height: 80vw; background: var(--bg-gold); top: 20%; left: 10%; animation-delay: -10s; }
+.b1 { width: 55vmax; height: 55vmax; background: var(--bg-violet); top: -15%; left: -15%; animation-delay: 0s; }
+.b2 { width: 30vmax; height: 30vmax; background: var(--bg-magenta); bottom: 5%; right: 5%; animation-delay: -5s; }
+.b3 { width: 80vmax; height: 80vmax; background: var(--bg-gold); top: 15%; left: 5%; animation-delay: -10s; }
 body.light-theme .blob { filter: blur(60px); opacity: 0.5; }
 
 @keyframes morphBlob {
@@ -412,23 +412,45 @@ body.light-theme .voice-orb {
 #flash.on{opacity:0.8}
 
 /* ─── MOBILE OPTIMIZATION ────────────────────────── */
-@media(max-width: 600px){
+@media(max-width: 768px){
   .w-pill{width:calc(100vw - 40px) !important}
   #top-nav { padding: 0 10px; }
   .bc-bubble { padding: 8px 12px; font-size: 11px; }
-  
-  /* Mobile Stacked Navbar (Like screenshot) */
+
+  /* Apple-style full-width bottom tab bar */
   #bottom-nav {
-    width: calc(100vw - 40px);
-    justify-content: space-between; padding: 12px 20px;
+    bottom: 0 !important;
+    left: 0 !important; right: 0 !important;
+    transform: none !important;
+    width: 100% !important;
+    border-radius: 0 !important;
+    border-top: 1px solid var(--glass-border);
+    border-bottom: none;
+    padding: 8px 0 calc(8px + env(safe-area-inset-bottom)) 0;
+    justify-content: space-around;
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    background: rgba(10,12,30,0.8);
+    box-shadow: 0 -1px 0 var(--glass-border);
+    gap: 0;
   }
+  body.light-theme #bottom-nav { background: rgba(240,235,225,0.85); }
+  #bottom-nav.show { opacity:1; transform: none !important; }
   .nav-btn {
-    flex-direction: column; justify-content: center; width: auto !important; height: auto;
-    padding: 4px; background: transparent !important;
+    flex-direction: column; justify-content: center; align-items: center;
+    width: auto !important; height: auto; min-width: 60px;
+    padding: 4px 8px; background: transparent !important;
+    border-radius: 12px !important;
   }
-  .nav-btn svg { margin-bottom: 6px; }
+  .nav-btn svg { margin-bottom: 3px; width: 22px; height: 22px; }
   .nav-lbl { margin-left: 0; opacity: 1; font-size: 10px; text-align: center; }
   .nav-sep { display: none; }
+  .nav-btn:hover, .nav-btn.active { width: auto !important; }
+
+  /* Tighten reading view on mobile */
+  #reading { padding: 100px 16px 120px; }
+  .read-container { padding: 24px 16px; }
+  #btn-prev { left: 8px; } #btn-next { right: 8px; }
 }
 </style>
 </head>
@@ -607,8 +629,81 @@ const BOOKS = [
 ];
 
 const BOOK_MAP = {};
-BOOKS.forEach((b, i) => { BOOK_MAP[b.a] = i; BOOK_MAP[b.n.toLowerCase()] = i; });
-['gen','ex','lev','num','deut','josh','judg','ruth','1sam','2sam','1kgs','2kgs','1chr','2chr','ezra','neh','esth','job','ps','prov','eccl','song','isa','jer','lam','ezek','dan','hos','joel','amos','obad','jonah','mic','nah','hab','zeph','hag','zech','mal','matt','mark','luke','john','acts','rom','1cor','2cor','gal','eph','phil','col','1thess','2thess','1tim','2tim','titus','phlm','heb','jas','1pet','2pet','1john','2john','3john','jude','rev'].forEach((a,i) => BOOK_MAP[a]=i);
+BOOKS.forEach((b, i) => {
+  BOOK_MAP[b.a] = i;                          // native abbreviation
+  BOOK_MAP[b.n.toLowerCase()] = i;            // full name
+  BOOK_MAP[b.n.toLowerCase().replace(/s$/,'')] = i; // singular (psalm)
+});
+// All known API aliases (bible-api.com book_id codes, abbreviations, etc)
+const _aliases = [
+  ['gen','ge'],                        // Genesis
+  ['exo','ex','exod'],                 // Exodus
+  ['lev','le'],                        // Leviticus
+  ['num','nu','nm'],                   // Numbers
+  ['deu','dt','deut'],                 // Deuteronomy
+  ['jos','jsh'],                       // Joshua
+  ['jdg','jg','jud','judg'],           // Judges
+  ['rth','ru'],                        // Ruth
+  ['1sa','1s'],                        // 1 Samuel
+  ['2sa','2s'],                        // 2 Samuel
+  ['1ki','1k','1kgs'],                 // 1 Kings
+  ['2ki','2k','2kgs'],                 // 2 Kings
+  ['1ch','1chr'],                      // 1 Chronicles
+  ['2ch','2chr'],                      // 2 Chronicles
+  ['ezr'],                             // Ezra
+  ['neh','ne'],                        // Nehemiah
+  ['est','esth'],                      // Esther
+  ['job','jb'],                        // Job
+  ['psa','ps','psalm'],                // Psalms
+  ['pro','pr'],                        // Proverbs
+  ['ecc','ec','eccl'],                 // Ecclesiastes
+  ['sng','ss','song'],                 // Song of Solomon
+  ['isa','is'],                        // Isaiah
+  ['jer','je'],                        // Jeremiah
+  ['lam','la'],                        // Lamentations
+  ['ezk','eze','ezek'],               // Ezekiel
+  ['dan','da','dn'],                   // Daniel
+  ['hos','ho'],                        // Hosea
+  ['jol','joe','joel'],               // Joel
+  ['amo','am'],                        // Amos
+  ['oba','ob','obad'],                 // Obadiah
+  ['jon','jnh','jonah'],              // Jonah
+  ['mic','mi'],                        // Micah
+  ['nah','na'],                        // Nahum
+  ['hab','hb'],                        // Habakkuk
+  ['zep','zph','zeph'],               // Zephaniah
+  ['hag','hg'],                        // Haggai
+  ['zec','zch','zech'],               // Zechariah
+  ['mal','ml'],                        // Malachi
+  ['mat','mt','matt'],                 // Matthew
+  ['mrk','mk','mr'],                   // Mark
+  ['luk','lk'],                        // Luke
+  ['jhn','jn'],                        // John
+  ['act','ac'],                        // Acts
+  ['rom','ro','rm'],                   // Romans
+  ['1co','1cor'],                      // 1 Corinthians
+  ['2co','2cor'],                      // 2 Corinthians
+  ['gal','ga'],                        // Galatians
+  ['eph','ep'],                        // Ephesians
+  ['php','phi','phil'],               // Philippians
+  ['col','co'],                        // Colossians
+  ['1th','1thess'],                    // 1 Thessalonians
+  ['2th','2thess'],                    // 2 Thessalonians
+  ['1ti','1tim'],                      // 1 Timothy
+  ['2ti','2tim'],                      // 2 Timothy
+  ['tit','ti'],                        // Titus
+  ['phm','phlm'],                      // Philemon
+  ['heb','he'],                        // Hebrews
+  ['jas','jm'],                        // James
+  ['1pe','1pet'],                      // 1 Peter
+  ['2pe','2pet'],                      // 2 Peter
+  ['1jn','1john'],                     // 1 John
+  ['2jn','2john'],                     // 2 John
+  ['3jn','3john'],                     // 3 John
+  ['jud','jude'],                      // Jude
+  ['rev','re','rv'],                   // Revelation
+];
+_aliases.forEach((aliases, i) => aliases.forEach(a => BOOK_MAP[a] = i));
 
 const POP = [
   {r:'John 3:16',b:'john',c:3,v:16,x:'For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.'},
@@ -669,9 +764,7 @@ class Wheel {
         el.innerHTML = `<span class="p-name">${escHtml(item.label)}</span><span class="p-sub">${item.sub||''}</span>`;
       }
 
-      el.addEventListener('pointerdown', (e) => {
-        if (Math.abs(i - this.selIdx) <= 0.5) { e.stopPropagation(); this.onSelect && this.onSelect(item, i); }
-      });
+      // No per-element click listeners — tap is handled by wrap's pointerup
       this.track.appendChild(el); this.els.push(el);
     });
   }
@@ -723,9 +816,13 @@ class Wheel {
 
   _bindEvents() {
     const w = this.wrap;
+    let _downY = 0, _totalMove = 0;
+
     w.addEventListener('pointerdown', e => {
-      this.dragging = true; this.startY = e.clientY; this.prevY = e.clientY;
+      this.dragging = true;
+      this.startY = e.clientY; this.prevY = e.clientY;
       this.prevTime = Date.now(); this.velocity = 0; this.snapTo = null;
+      _downY = e.clientY; _totalMove = 0;
       w.setPointerCapture(e.pointerId);
     });
     w.addEventListener('pointermove', e => {
@@ -733,9 +830,20 @@ class Wheel {
       const dy = this.prevY - e.clientY, dt = Math.max(1, Date.now() - this.prevTime);
       this.velocity = dy / dt * 18; this.offset += dy;
       this.prevY = e.clientY; this.prevTime = Date.now();
+      _totalMove += Math.abs(dy);
     });
-    const up = () => { this.dragging = false; };
-    w.addEventListener('pointerup', up); w.addEventListener('pointercancel', up);
+    w.addEventListener('pointerup', e => {
+      this.dragging = false;
+      // If total movement was tiny it's a tap, not a drag
+      if (_totalMove < 10) {
+        const centered = this.selIdx;
+        const item = this.items[centered];
+        if (item && !item.loading) {
+          this.onSelect && this.onSelect(item, centered);
+        }
+      }
+    });
+    w.addEventListener('pointercancel', () => { this.dragging = false; });
     w.addEventListener('wheel', e => { e.preventDefault(); this.velocity += e.deltaY * 0.3; this.snapTo = null; }, { passive: false });
   }
 }
@@ -746,12 +854,12 @@ async function fetchChapterData(book, chNum) {
   
   if (isCopyrighted) {
     try {
-      const bollsId = book.idx + 1;
+      const bollsId = BOOK_MAP[book.a] + 1;
       const res = await fetch(`https://bolls.life/get-text/${S.translation.toUpperCase()}/${bollsId}/${chNum}/`);
       if (!res.ok) throw new Error('Bolls API failed');
       const data = await res.json();
       if (!data || !data.length) throw new Error('Empty');
-      return { source: 'bolls', verses: data.map(v => ({ verse: v.verse, text: v.text })) };
+      return { source: 'bolls', verses: data.map(v => ({ verse: v.verse, text: cleanBollsText(v.text) })) };
     } catch(e) {
       console.warn('Fallback to WEB due to API limits', e);
       return fetchBibleApi(book, chNum, 'web', true);
@@ -764,7 +872,9 @@ async function fetchChapterData(book, chNum) {
 async function fetchBibleApi(book, chNum, trans, isFallback) {
   const res = await fetch(`https://bible-api.com/${encodeURIComponent(book.a)}+${chNum}?translation=${trans}`);
   const data = await res.json();
-  return { source: isFallback ? 'fallback' : 'api', verses: data.verses || [] };
+  // Normalize: always store text in v.text
+  const verses = (data.verses || []).map(v => ({ verse: v.verse, text: v.text || '' }));
+  return { source: isFallback ? 'fallback' : 'api', verses };
 }
 
 /* ─── APP FLOW ─── */
@@ -799,10 +909,11 @@ async function goVerses(startIdx = 0) {
 
   try {
     const data = await fetchChapterData(S.book, S.chapter);
-    if (!data.verses.length) throw new Error('empty');
+    if (!data || !data.verses || !data.verses.length) throw new Error('empty');
     
-    // Cache chapter verses for navigation arrows
-    S.chapterData = { ch: S.chapter, verses: data.verses };
+    // Normalize verse objects: always {verse, text}
+    const verses = data.verses.map(v => ({ verse: v.verse, text: String(v.text || '') }));
+    S.chapterData = { ch: S.chapter, verses };
     
     if (data.source === 'fallback') {
       const w = document.getElementById('trans-badge');
@@ -810,7 +921,7 @@ async function goVerses(startIdx = 0) {
       w.style.color = '#ffaa00';
     }
 
-    wheel.load(data.verses.map(v => ({
+    wheel.load(verses.map(v => ({
       type: 'verse', vn: v.verse,
       preview: escHtml(v.text).substring(0, 140) + '…',
       full: escHtml(v.text), ch: S.chapter, bName: S.book.n,
@@ -818,9 +929,10 @@ async function goVerses(startIdx = 0) {
       if (wheel.selIdx !== item.vn - 1) { wheel.goTo(item.vn - 1); return; }
       openVerse(item);
     }, startIdx);
-  } catch {
+  } catch(err) {
+    console.warn('goVerses error:', err);
     wheel.load(Array.from({length:20}, (_,i) => ({
-      type:'verse', vn:i+1, preview:'Network error. Please try again.', full:'', ch:S.chapter, bName:S.book.n
+      type:'verse', vn:i+1, preview:'Could not load. Check connection.', full:'', ch:S.chapter, bName:S.book.n
     })), () => {}, startIdx);
   }
 }
@@ -834,19 +946,21 @@ function setupArrows(onPrev, onNext) {
 
 function openVerse(item) {
   S.screen = 'reading';
-  document.getElementById('app').style.opacity = '0';
-  document.getElementById('app').style.pointerEvents = 'none';
+  const app = document.getElementById('app');
+  app.style.opacity = '0';
+  app.style.pointerEvents = 'none';
   const readV = document.getElementById('reading');
   readV.classList.add('show');
   readV.style.setProperty('--read-fs', S.fontSize);
   
   // Logic for Verse Navigation Arrows
-  if (S.chapterData && S.chapterData.ch === S.chapter) {
+  if (S.chapterData && S.chapterData.ch === S.chapter && S.chapterData.verses) {
     const idx = S.chapterData.verses.findIndex(v => v.verse == item.vn);
     if (idx !== -1) {
+      const vArr = S.chapterData.verses;
       setupArrows(
-        idx > 0 ? () => openVerse({full: escHtml(S.chapterData.verses[idx-1].text), ch: S.chapter, vn: S.chapterData.verses[idx-1].verse, bName: S.book.n}) : null,
-        idx < S.chapterData.verses.length - 1 ? () => openVerse({full: escHtml(S.chapterData.verses[idx+1].text), ch: S.chapter, vn: S.chapterData.verses[idx+1].verse, bName: S.book.n}) : null
+        idx > 0 ? () => openVerse({full: escHtml(vArr[idx-1].text), ch: S.chapter, vn: vArr[idx-1].verse, bName: S.book.n}) : null,
+        idx < vArr.length - 1 ? () => openVerse({full: escHtml(vArr[idx+1].text), ch: S.chapter, vn: vArr[idx+1].verse, bName: S.book.n}) : null
       );
     } else setupArrows(null, null);
   } else {
@@ -947,21 +1061,39 @@ function renderBC() {
   badge.textContent = S.translation.toUpperCase();
   badge.style.color = 'var(--txt)';
 
-  let html = `<div class="bubble bc-bubble ${S.screen==='books'?'active':''}" onclick="if(S.screen!=='books')flash(()=>goBooks())">Bible</div>`;
+  // Home always goes to landing page
+  let html = `<div class="bubble bc-bubble" onclick="goHome()" title="Home">Home</div>`;
+  html += `<div class="bubble bc-bubble ${S.screen==='books'?'active':''}" onclick="if(S.screen!=='books')flash(()=>goBooks())">Books</div>`;
   if (S.book) html += `<div class="bubble bc-bubble ${S.screen==='chapters'?'active':''}" onclick="if(S.screen!=='chapters')flash(()=>goChapters())">${S.book.n}</div>`;
   if (S.chapter) html += `<div class="bubble bc-bubble ${S.screen==='verses'||S.screen==='reading'?'active':''}" onclick="if(S.screen==='reading')closeReading()">Ch ${S.chapter}</div>`;
   bc.innerHTML = html;
 }
 
-// Fixed HTML escaping to completely remove <br/> and \n
+function goHome() {
+  closeAllPanels();
+  setupArrows(null, null);
+  document.getElementById('reading').classList.remove('show');
+  document.getElementById('app').classList.remove('show');
+  // Clear any inline styles that might have been set by openVerse
+  const app = document.getElementById('app');
+  app.style.opacity = '';
+  app.style.pointerEvents = '';
+  document.getElementById('bottom-nav').classList.remove('show');
+  const landing = document.getElementById('landing');
+  landing.style.display = '';
+  landing.classList.remove('exit');
+}
+
+// HTML escaping: removes <br/> and \n, preserves safe inline tags
 function escHtml(s) { 
   if(!s) return '';
   return String(s)
     .replace(/<br\s*\/?>/gi, ' ')
     .replace(/\n/g, ' ')
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/&lt;(\/?(?:i|em))&gt;/gi, '<$1>') // restore <i> <em> tags
     .replace(/\s{2,}/g, ' ')
-    .trim(); 
+    .trim();
 }
 
 /* ─── UI CONTROLS ─── */
@@ -1007,7 +1139,10 @@ document.getElementById('open-btn').addEventListener('click', () => {
   document.getElementById('landing').classList.add('exit');
   setTimeout(() => {
     document.getElementById('landing').style.display = 'none';
-    document.getElementById('app').classList.add('show');
+    const app = document.getElementById('app');
+    app.classList.add('show');
+    app.style.opacity = '1';
+    app.style.pointerEvents = 'all';
     setTimeout(() => document.getElementById('bottom-nav').classList.add('show'), 300);
   }, 700);
 });
@@ -1037,36 +1172,66 @@ function renderSearchResults(hits) {
 }
 
 function cleanBollsText(html) {
-  return html.replace(/<S>.*?<\/S>/gi, '').replace(/<sup.*?>.*?<\/sup>/gi, '').replace(/<.*?>/g, '').replace(/\s{2,}/g, ' ').trim();
+  // Strip Strong's numbers and sup tags but KEEP <i> and <em> for italics
+  return html
+    .replace(/<S>\d+<\/S>/gi, '')
+    .replace(/<sup[^>]*>.*?<\/sup>/gi, '')
+    .replace(/<(?!\/?(?:i|em)\b)[^>]+>/gi, '')
+    .replace(/\s{2,}/g, ' ').trim();
 }
 
 async function doSearch(q) {
   const results = document.getElementById('srch-results');
   if (!q.trim()) { results.innerHTML = ''; return; }
-  results.innerHTML = '<div style="text-align:center;color:var(--txt3);padding:24px">Searching...</div>';
+  results.innerHTML = '<div style="text-align:center;color:var(--txt3);padding:24px">Searching…</div>';
   
   const ql = q.toLowerCase();
   let hits = POP.filter(p => p.x.toLowerCase().includes(ql) || p.r.toLowerCase().includes(ql));
+
+  // Also try bible-api for direct references like "Psalm 119" or "John 3:16"
+  try {
+    const trans = S.translation === 'nkjv' || S.translation === 'niv' || S.translation === 'esv' ? 'web' : S.translation;
+    const refRes = await fetch(`https://bible-api.com/${encodeURIComponent(q)}?translation=${trans}`);
+    if (refRes.ok) {
+      const refData = await refRes.json();
+      if (refData && refData.verses && refData.verses.length > 0) {
+        const v = refData.verses[0];
+        const bKey = (v.book_id || v.book_name).toLowerCase();
+        const b = BOOKS[BOOK_MAP[bKey]];
+        if (b) {
+          if (refData.verses.length > 1) {
+            // Whole chapter result → show a single entry that opens the wheel
+            const ref = `${b.n} ${v.chapter}`;
+            if (!hits.find(h => h.r === ref)) {
+              hits.unshift({ r: ref, b: b.a, c: v.chapter, v: v.verse,
+                x: `Full chapter — ${refData.verses.length} verses`, _fullVerses: refData.verses });
+            }
+          } else {
+            const ref = `${b.n} ${v.chapter}:${v.verse}`;
+            if (!hits.find(h => h.r === ref))
+              hits.unshift({ r: ref, b: b.a, c: v.chapter, v: v.verse, x: escHtml(refData.text) });
+          }
+        }
+      }
+    }
+  } catch(e) { /* ignore */ }
   
+  // Full-text Bolls search
   try {
     const tr = S.translation === 'nkjv' || S.translation === 'niv' || S.translation === 'esv' ? 'WEB' : S.translation.toUpperCase();
     const res = await fetch(`https://bolls.life/search/${tr}/?search=${encodeURIComponent(q)}&match_case=false&match_whole=false`);
     if(res.ok) {
       const data = await res.json();
       if(data && data.length) {
-        const apiHits = data.slice(0, 15).map(v => {
-          const b = BOOKS[v.book - 1];
-          if (!b) return null; // Ignore apocrypha
-          return {
-             r: `${b.n} ${v.chapter}:${v.verse}`,
-             b: b.a, c: v.chapter, v: v.verse, x: cleanBollsText(v.text)
-          };
-        }).filter(Boolean);
-        
-        // Merge and unique
         const seen = new Set(hits.map(h => h.r));
-        for(let a of apiHits) {
-          if(!seen.has(a.r)) { hits.push(a); seen.add(a.r); }
+        for (const v of data.slice(0, 20)) {
+          const b = BOOKS[v.book - 1];
+          if (!b) continue;
+          const ref = `${b.n} ${v.chapter}:${v.verse}`;
+          if (!seen.has(ref)) {
+            hits.push({ r: ref, b: b.a, c: v.chapter, v: v.verse, x: cleanBollsText(v.text) });
+            seen.add(ref);
+          }
         }
       }
     }
@@ -1078,10 +1243,18 @@ window.navPop = function(idx) {
   const p = window._SA[idx];
   S.book = BOOKS[BOOK_MAP[p.b]]; S.chapter = p.c;
   closeAllPanels();
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('app').classList.add('show');
   document.getElementById('app').style.opacity = '1';
   document.getElementById('app').style.pointerEvents = 'all';
-  openVerse({full: p.x, ch: p.c, vn: p.v, bName: S.book.n});
-  renderBC();
+  document.getElementById('bottom-nav').classList.add('show');
+  // If full chapter result, route to wheel
+  if (p._fullVerses) {
+    openChapterFromSearch(S.book, p.c, p._fullVerses);
+  } else {
+    openVerse({full: p.x, ch: p.c, vn: p.v, bName: S.book.n});
+    renderBC();
+  }
 };
 document.getElementById('srch-clear').addEventListener('click', () => {
   document.getElementById('search-input').value = '';
@@ -1157,101 +1330,146 @@ function stopVoice() {
   closeAllPanels();
 }
 
-// Converts written numbers to digits so the API can understand them
+// Converts written numbers to digits, strips filler words, and scans anywhere in sentence for book names
 function parseVoiceRef(cmd) {
-  const map = {
+  const numMap = {
     'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10,
-    'eleven':11,'twelve':12,'thirteen':13,'fourteen':14,'fifteen':15,'sixteen':16,'seventeen':17,'eighteen':18,'nineteen':19,'twenty':20,
-    'thirty':30,'forty':40,'fifty':50,'sixty':60,'seventy':70,'eighty':80,'ninety':90,'hundred':100,
-    'first':'1','second':'2','third':'3'
+    'eleven':11,'twelve':12,'thirteen':13,'fourteen':14,'fifteen':15,'sixteen':16,'seventeen':17,
+    'eighteen':18,'nineteen':19,'twenty':20,'thirty':30,'forty':40,'fifty':50,'sixty':60,
+    'seventy':70,'eighty':80,'ninety':90,'hundred':100,'first':'1','second':'2','third':'3'
   };
-  
-  let s = cmd.toLowerCase().split(' ').map(w => map[w] !== undefined ? map[w] : w).join(' ');
-  s = s.replace(/(chapter|verse|book of)/g, '').replace(/(:|;|'|,|\.)/g, '').replace(/\s+/g, ' ').trim();
-  s = s.replace(/^first /g, '1 ').replace(/^second /g, '2 ').replace(/^third /g, '3 ');
 
-  let matchedBook = null;
-  let remaining = s;
-  for (let b of BOOKS) {
-    if (s.startsWith(b.n.toLowerCase())) {
+  // Strip common filler words before parsing
+  let s = cmd.toLowerCase()
+    .replace(/\b(read|open|show|find|search|go to|take me to|bring up|give me|tell me about|what does|say)\b/g, '')
+    .split(' ').map(w => numMap[w] !== undefined ? numMap[w] : w).join(' ');
+
+  s = s.replace(/(chapter|verse|book of)/g, '').replace(/(:|;|'|,|\.)/g, '').replace(/\s+/g, ' ').trim();
+  s = s.replace(/^(first|1st) /,'1 ').replace(/^(second|2nd) /,'2 ').replace(/^(third|3rd) /,'3 ');
+
+  // Scan ANYWHERE in the string for a book name (not just the start)
+  let matchedBook = null, remaining = s, bookStart = -1;
+  for (const b of BOOKS) {
+    const bLow = b.n.toLowerCase();
+    const idx = s.indexOf(bLow);
+    if (idx !== -1 && (bookStart === -1 || idx < bookStart)) {
       matchedBook = b.n;
-      remaining = s.substring(b.n.length).trim();
-      break;
+      bookStart = idx;
+      remaining = s.substring(idx + bLow.length).trim();
     }
   }
-  
+
   if (matchedBook) {
-    let parts = remaining.split(' ').filter(Boolean);
-    let ch = parseInt(parts[0]);
-    let v = parseInt(parts[1]);
+    const parts = remaining.split(' ').filter(Boolean);
+    const ch = parseInt(parts[0]);
+    const v = parseInt(parts[1]);
     if (!isNaN(ch)) {
       if (!isNaN(v)) return `${matchedBook} ${ch}:${v}`;
       return `${matchedBook} ${ch}`;
     }
     return matchedBook;
   }
-  return cmd; 
+  return cmd;
 }
 
 async function processVoiceCommand(cmd) {
   const vStatus = document.getElementById('v-status');
   vStatus.textContent = 'Analyzing…';
-  
-  let query = parseVoiceRef(cmd);
-  
-  try {
-    // 1. Try parsing as a verse reference (e.g. "John 3:16")
-    const res = await fetch(`https://bible-api.com/${encodeURIComponent(query)}?translation=${S.translation === 'nkjv' || S.translation === 'niv' || S.translation === 'esv' ? 'web' : S.translation}`);
-    if (res.ok) {
-      const data = await res.json();
-      if (data && data.verses && data.verses.length > 0) {
-        const v = data.verses[0];
-        const bKey = v.book_id ? v.book_id.toLowerCase() : v.book_name.toLowerCase();
-        openFromVoice(BOOKS[BOOK_MAP[bKey]] || BOOKS[0], v.chapter, v.verse, data.text);
-        return;
-      }
-    }
-  } catch (e) {
-    // silently fail and proceed
-  }
 
-  // 2. Check Local Popular Verses First (INSTANT)
-  const hits = POP.filter(p => p.x.toLowerCase().includes(cmd.toLowerCase()) || p.r.toLowerCase().includes(cmd.toLowerCase()));
-  if(hits.length) {
-    const p = hits[0];
-    openFromVoice(BOOKS[BOOK_MAP[p.b]], p.c, p.v, p.x);
+  const query = parseVoiceRef(cmd);
+  const cmdLow = cmd.toLowerCase();
+
+  // 1. INSTANT: Check local popular verses first (zero network cost)
+  const popHit = POP.find(p => p.x.toLowerCase().includes(cmdLow) || p.r.toLowerCase().includes(cmdLow));
+  if (popHit) {
+    openFromVoice(BOOKS[BOOK_MAP[popHit.b]], popHit.c, popHit.v, popHit.x);
     return;
   }
 
-  // 3. Full-text search fallback
-  vStatus.textContent = 'Searching full text…';
-  try {
-    const tr = S.translation === 'nkjv' || S.translation === 'niv' || S.translation === 'esv' ? 'WEB' : S.translation.toUpperCase();
-    const sRes = await fetch(`https://bolls.life/search/${tr}/?search=${encodeURIComponent(cmd)}&match_case=false&match_whole=false`);
-    if (sRes.ok) {
-      const sData = await sRes.json();
-      if (sData && sData.length > 0) {
-        // Find the first valid book (1-66) to skip apocrypha
-        const v = sData.find(item => BOOKS[item.book - 1]);
+  // 2. Fire bible-api and Bolls in PARALLEL — use whichever responds first with a valid result
+  const trans = S.translation === 'nkjv' || S.translation === 'niv' || S.translation === 'esv' ? 'web' : S.translation;
+  const tr = S.translation === 'nkjv' || S.translation === 'niv' || S.translation === 'esv' ? 'WEB' : S.translation.toUpperCase();
+
+  vStatus.textContent = 'Searching…';
+
+  const bibleApiPromise = fetch(`https://bible-api.com/${encodeURIComponent(query)}?translation=${trans}`)
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (data && data.verses && data.verses.length > 0) {
+        const v = data.verses[0];
+        const bKey = (v.book_id || v.book_name || '').toLowerCase();
+        const book = BOOKS[BOOK_MAP[bKey]];
+        if (!book) return null;
+        if (data.verses.length > 1) return { type: 'chapter', book, ch: v.chapter, verses: data.verses };
+        return { type: 'verse', book, ch: v.chapter, vn: v.verse, text: data.text || v.text };
+      }
+      return null;
+    }).catch(() => null);
+
+  const bollsPromise = fetch(`https://bolls.life/search/${tr}/?search=${encodeURIComponent(cmd)}&match_case=false&match_whole=false`)
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (data && data.length > 0) {
+        const v = data.find(item => BOOKS[item.book - 1]);
         if (v) {
-          const b = BOOKS[v.book - 1];
-          openFromVoice(b, v.chapter, v.verse, cleanBollsText(v.text));
-          return;
+          const book = BOOKS[v.book - 1];
+          return { type: 'verse', book, ch: v.chapter, vn: v.verse, text: cleanBollsText(v.text) };
         }
       }
-    }
-  } catch(err) { console.warn('Bolls search failed', err); }
+      return null;
+    }).catch(() => null);
 
-  vStatus.textContent = `Couldn't find "${query}".`;
-  setTimeout(() => { if(!isListening) vStatus.textContent = 'Tap orb to retry'; }, 3500);
+  // Wait for both and use first non-null result (prefer bible-api for references)
+  const [bibleResult, bollsResult] = await Promise.all([bibleApiPromise, bollsPromise]);
+  const result = bibleResult || bollsResult;
+
+  if (result) {
+    if (result.type === 'chapter') {
+      openChapterFromSearch(result.book, result.ch, result.verses);
+    } else {
+      openFromVoice(result.book, result.ch, result.vn, result.text);
+    }
+    return;
+  }
+
+  vStatus.textContent = `Couldn't find "${query}". Try again.`;
+  setTimeout(() => { if (!isListening) vStatus.textContent = 'Tap orb to retry'; }, 3500);
 }
 
 function openFromVoice(book, ch, vn, text) {
   stopVoice();
   document.getElementById('landing').style.display = 'none';
-  document.getElementById('app').classList.add('show');
+  const app = document.getElementById('app');
+  app.classList.add('show');
+  app.style.opacity = '1';
+  app.style.pointerEvents = 'all';
+  document.getElementById('bottom-nav').classList.add('show');
   S.book = book; S.chapter = ch;
   openVerse({ full: escHtml(text), ch: ch, vn: vn, bName: book.n });
+  renderBC();
+}
+
+function openChapterFromSearch(book, ch, verses) {
+  stopVoice(); closeAllPanels();
+  document.getElementById('landing').style.display = 'none';
+  const app = document.getElementById('app');
+  app.classList.add('show');
+  app.style.opacity = '1';
+  app.style.pointerEvents = 'all';
+  document.getElementById('bottom-nav').classList.add('show');
+  S.book = book; S.chapter = ch;
+  // Normalize verses to always have {verse, text}
+  const norm = verses.map(v => ({ verse: v.verse, text: String(v.text || '') }));
+  S.chapterData = { ch, verses: norm };
+  S.screen = 'verses';
+  wheel.load(norm.map(v => ({
+    type: 'verse', vn: v.verse,
+    preview: escHtml(v.text).substring(0, 140) + '…',
+    full: escHtml(v.text), ch, bName: book.n,
+  })), (item) => {
+    if (wheel.selIdx !== item.vn - 1) { wheel.goTo(item.vn - 1); return; }
+    openVerse(item);
+  }, 0);
   renderBC();
 }
 
