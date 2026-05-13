@@ -1,14 +1,14 @@
-<div align="center">
+<div>
   <br />
-  <h1 align="center">the <strong>SACRED</strong> project</h1>
-  <p align="center">
+  <h1>the <strong>SACRED</strong> project</h1>
+  <p>
     <strong>A breathtaking, immersive, and zero-backend Bible application for modern believers.</strong>
   </p>
   <br />
 </div>
 
 ## 🌐 Live Preview
-**[Click here to view the live app!]({YOUR_LIVE_GITHUB_PAGES_LINK_HERE})**
+**[Click here to view the live app!](https://aryan-kandula.github.io/theSACREDproject/)**
 
 ---
 
